@@ -3,57 +3,58 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.utl.elzarape.SucursalController" stylesheets="@style/sucursal.styles.css">
+<AnchorPane prefHeight="500.0" prefWidth="1000.0" stylesheets="@style/sucursal.styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.utl.elzarape.SucursalController">
     <children>
-        <GridPane alignment="center" hgap="10" vgap="10" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="20.0">
+        <GridPane alignment="center" hgap="10" vgap="10" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
             <columnConstraints>
                 <ColumnConstraints halignment="RIGHT" minWidth="100" />
                 <ColumnConstraints halignment="LEFT" minWidth="200" />
             </columnConstraints>
 
             <!-- Labels and Fields -->
-            <Label text="ID Sucursal:" />
-            <TextField fx:id="txtIdSucursal" GridPane.columnIndex="1" />
+            <Label text="Nombre:" />
+            <TextField fx:id="txtNombre" GridPane.columnIndex="1" prefWidth="200" maxWidth="200" />
 
-            <Label text="Nombre:" GridPane.rowIndex="1" />
-            <TextField fx:id="txtNombre" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Latitud:" GridPane.rowIndex="1" />
+            <TextField fx:id="txtLatitud" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="200" maxWidth="200" />
 
-            <Label text="Latitud:" GridPane.rowIndex="2" />
-            <TextField fx:id="txtLatitud" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Longitud:" GridPane.rowIndex="2" />
+            <TextField fx:id="txtLongitud" GridPane.columnIndex="1" GridPane.rowIndex="2" prefWidth="200" maxWidth="200" />
 
-            <Label text="Longitud:" GridPane.rowIndex="3" />
-            <TextField fx:id="txtLongitud" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Foto (URL):" GridPane.rowIndex="3" />
+            <TextField fx:id="txtFoto" GridPane.columnIndex="1" GridPane.rowIndex="3" prefWidth="200" maxWidth="200" />
 
-            <Label text="Foto (URL):" GridPane.rowIndex="4" />
-            <TextField fx:id="txtFoto" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="URL Web:" GridPane.rowIndex="4" />
+            <TextField fx:id="txtUrl" GridPane.columnIndex="1" GridPane.rowIndex="4" prefWidth="200" maxWidth="200" />
 
-            <Label text="URL Web:" GridPane.rowIndex="5" />
-            <TextField fx:id="txtUrl" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label text="Horarios:" GridPane.rowIndex="5" />
+            <TextField fx:id="txtHorarios" GridPane.columnIndex="1" GridPane.rowIndex="5" prefWidth="200" maxWidth="200" />
 
-            <Label text="Horarios:" GridPane.rowIndex="6" />
-            <TextField fx:id="txtHorarios" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Label text="Calle:" GridPane.rowIndex="6" />
+            <TextField fx:id="txtCalle" GridPane.columnIndex="1" GridPane.rowIndex="6" prefWidth="200" maxWidth="200" />
 
-            <Label text="Calle:" GridPane.rowIndex="7" />
-            <TextField fx:id="txtCalle" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Label text="Número de Calle:" GridPane.rowIndex="7" />
+            <TextField fx:id="txtNumCalle" GridPane.columnIndex="1" GridPane.rowIndex="7" prefWidth="200" maxWidth="200" />
 
-            <Label text="Número de Calle:" GridPane.rowIndex="8" />
-            <TextField fx:id="txtNumCalle" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <Label text="Colonia:" GridPane.rowIndex="8" />
+            <TextField fx:id="txtColonia" GridPane.columnIndex="1" GridPane.rowIndex="8" prefWidth="200" maxWidth="200" />
 
-            <Label text="Colonia:" GridPane.rowIndex="9" />
-            <TextField fx:id="txtColonia" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <Label text="Estado:" GridPane.rowIndex="9" />
+            <ComboBox fx:id="cbEstado" onAction="#onEstadoSelected" GridPane.columnIndex="1" GridPane.rowIndex="9" prefWidth="200" maxWidth="200" />
 
-            <Label text="Estado:" GridPane.rowIndex="10" />
-            <ComboBox fx:id="cbEstado" GridPane.columnIndex="1" GridPane.rowIndex="10" onAction="#onEstadoSelected" />
+            <Label text="Ciudad:" GridPane.rowIndex="10" />
+            <ComboBox fx:id="cbCiudad" GridPane.columnIndex="1" GridPane.rowIndex="10" prefWidth="200" maxWidth="200" />
 
-            <Label text="Ciudad:" GridPane.rowIndex="11" />
-            <ComboBox fx:id="cbCiudad" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <!-- Botones -->
+            <HBox spacing="10" GridPane.rowIndex="11" GridPane.columnIndex="1" alignment="CENTER_LEFT">
+                <children>
+                    <Button fx:id="btnGuardar" text="Agregar" onAction="#handleGuardar" />
+                    <Button fx:id="btnLimpiar" onAction="#cleanForm" text="Limpiar" />
+                </children>
+            </HBox>
 
-            <Label text="Activo:" GridPane.rowIndex="12" />
-            <CheckBox fx:id="txtEstatus" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-
-            <Button fx:id="btnGuardar" text="Guardar" GridPane.rowIndex="13" />
-            <Button fx:id="btnCancelar" alignment="BASELINE_RIGHT" text="Cancelar" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-
+            <!-- Botón Cambiar Estatus -->
+            <Button fx:id="btnCambiarEstatus" onAction="#cambiarEstatus" text="Cambiar Estatus" GridPane.rowIndex="12" GridPane.columnIndex="1" visible="false" />
         </GridPane>
 
         <AnchorPane layoutX="330.0" layoutY="20.0" prefHeight="444.0" prefWidth="600.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="400.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="60.0">
@@ -63,13 +64,12 @@
                         <Font name="DIN Alternate Bold" size="24.0" />
                     </font>
                 </Label>
-                <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" AnchorPane.bottomAnchor="0.0">
+                <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
                     <content>
                         <TableView fx:id="tblSucursales">
                             <columns>
-                                <TableColumn fx:id="colIdSucursal"  text="ID " />
-                                <TableColumn fx:id="colNombre"  text="Nombre" />
-                                <TableColumn fx:id="colDireccion"  text="Dirección" />
+                                <TableColumn fx:id="colNombre" text="Nombre" />
+                                <TableColumn fx:id="colDireccion" text="Dirección" />
                                 <TableColumn fx:id="colEstatus" text="Estatus" />
                             </columns>
                         </TableView>

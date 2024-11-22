@@ -13,6 +13,11 @@ public class Ciudad {
         this.idEstado = idEstado;
     }
 
+    public Ciudad() {
+
+    }
+
+
     public int getIdCiudad() {
         return idCiudad;
     }
@@ -39,10 +44,6 @@ public class Ciudad {
 
     @Override
     public String toString() {
-        return "Ciudad{" +
-                "idCiudad=" + idCiudad +
-                ", nombre='" + nombre + '\'' +
-                ", idEstado=" + idEstado +
-                '}';
+        return nombre;
     }
 }

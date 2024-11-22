@@ -15,12 +15,11 @@ import org.utl.elzarape.model.Estado;
 import org.utl.elzarape.model.Sucursal;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SucursalController {
 
     @FXML
-    private Button btnCancelar, btnGuardar;
+    private Button btnCambiarEstatus, btnLimpiar, btnGuardar;
 
     @FXML
     private TableView<Sucursal> tblSucursales;
@@ -29,22 +28,22 @@ public class SucursalController {
     private TableColumn<Sucursal, String> colNombre, colDireccion;
 
     @FXML
-    private TableColumn<Sucursal, Integer> colIdSucursal, colEstatus;
+    private TableColumn<Sucursal, String> colEstatus;
 
     @FXML
-    private ComboBox<String> cbCiudad;
+    private ComboBox<Ciudad> cbCiudad;
 
     @FXML
     private ComboBox<Estado> cbEstado;
 
     @FXML
-    private TextField txtIdSucursal, txtNombre, txtCalle, txtNumCalle, txtColonia, txtLatitud, txtLongitud, txtFoto, txtUrl, txtHorarios;
+    private TextField txtNombre, txtCalle, txtNumCalle, txtColonia, txtLatitud, txtLongitud, txtFoto, txtUrl, txtHorarios;
 
     @FXML
     private CheckBox txtEstatus;
 
     private ObservableList<Sucursal> sucursales;
-    private ObservableList<String> ciudades;
+    private ObservableList<Ciudad> ciudades;
     private Sucursal sucursalSelected = null;
 
     @FXML
@@ -56,30 +55,36 @@ public class SucursalController {
         tblSucursales.setOnMouseClicked(event -> showSucursalSelected());
     }
 
+    @FXML
     private void initColumns() {
-        colIdSucursal.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getIdSucursal()));
-        colNombre.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getNombreSucursal()));
+        colNombre.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getNombre())); // Cambiado a "getNombre"
         colDireccion.setCellValueFactory(col -> new SimpleObjectProperty<>(
                 col.getValue().getCalle() + " #" +
                         col.getValue().getNumCalle() + ", " +
-                        col.getValue().getColonia() + "."+", "+
-                         col.getValue().getCiudad() +", "+
-                col.getValue().getEstado()));
+                        col.getValue().getColonia() + ", " +
+                        col.getValue().getCiudad().getNombre() + ", " +
+                        col.getValue().getEstado().getNombre()));
 
-        colEstatus.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getSucursalActivo()));
+        colEstatus.setCellValueFactory(col -> new SimpleObjectProperty<>(
+                col.getValue().getSucursalActivo() == 1 ? "Activo" : "Inactivo"));
+
+        tblSucursales.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
+
 
     private void loadSucursales() {
         Globals globals = new Globals();
         new Thread(() -> {
             try {
                 HttpResponse<String> response = Unirest.get(globals.BASE_URL + "sucursal/getall").asString();
+                System.out.println("JSON recibido: " + response.getBody());
                 Gson gson = new Gson();
                 Sucursal[] sucursalArray = gson.fromJson(response.getBody(), Sucursal[].class);
                 sucursales = FXCollections.observableArrayList(List.of(sucursalArray));
                 Platform.runLater(() -> tblSucursales.setItems(sucursales));
             } catch (Exception e) {
                 e.printStackTrace();
+                System.err.println("Error al cargar sucursales: " + e.getMessage());
             }
         }).start();
     }
@@ -88,18 +93,11 @@ public class SucursalController {
         Globals globals = new Globals();
         new Thread(() -> {
             try {
-                System.out.println("Cargando estados desde la API...");
                 HttpResponse<String> response = Unirest.get(globals.BASE_URL + "sucursal/getestados").asString();
-                System.out.println("Respuesta cruda de estados: " + response.getBody());
-
                 Gson gson = new Gson();
                 Estado[] estadoArray = gson.fromJson(response.getBody(), Estado[].class);
                 ObservableList<Estado> listaEstados = FXCollections.observableArrayList(List.of(estadoArray));
-
-                Platform.runLater(() -> {
-                    cbEstado.setItems(listaEstados);
-                    System.out.println("Estados cargados: " + listaEstados);
-                });
+                Platform.runLater(() -> cbEstado.setItems(listaEstados));
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println("Error al cargar estados: " + e.getMessage());
@@ -109,13 +107,9 @@ public class SucursalController {
 
     @FXML
     private void onEstadoSelected() {
-        System.out.println("onEstadoSelected llamado...");
         Estado selectedEstado = cbEstado.getSelectionModel().getSelectedItem();
         if (selectedEstado != null) {
-            System.out.println("Estado seleccionado: " + selectedEstado.getNombre());
             loadCiudadesByEstado(selectedEstado.getIdEstado());
-        } else {
-            System.out.println("No se seleccionó ningún estado.");
         }
     }
 
@@ -123,27 +117,11 @@ public class SucursalController {
         Globals globals = new Globals();
         new Thread(() -> {
             try {
-                String url = globals.BASE_URL + "sucursal/getciudades/" + idEstado;
-                System.out.println("URL Generada: " + url);
-
-                HttpResponse<String> response = Unirest.get(url).asString();
-                System.out.println("Respuesta Cruda de Ciudades: " + response.getBody());
-
-                if (!response.getBody().trim().startsWith("[")) {
-                    throw new IllegalStateException("La respuesta no es un arreglo JSON: " + response.getBody());
-                }
-
+                HttpResponse<String> response = Unirest.get(globals.BASE_URL + "sucursal/getciudades/" + idEstado).asString();
                 Gson gson = new Gson();
                 Ciudad[] ciudadArray = gson.fromJson(response.getBody(), Ciudad[].class);
-
-                ciudades = FXCollections.observableArrayList(
-                        List.of(ciudadArray).stream().map(Ciudad::getNombre).collect(Collectors.toList())
-                );
-
-                Platform.runLater(() -> {
-                    cbCiudad.setItems(ciudades);
-                    System.out.println("Ciudades cargadas: " + ciudades);
-                });
+                ObservableList<Ciudad> ciudadList = FXCollections.observableArrayList(List.of(ciudadArray));
+                Platform.runLater(() -> cbCiudad.setItems(ciudadList));
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println("Error al cargar ciudades: " + e.getMessage());
@@ -151,11 +129,11 @@ public class SucursalController {
         }).start();
     }
 
+    @FXML
     private void showSucursalSelected() {
         sucursalSelected = tblSucursales.getSelectionModel().getSelectedItem();
         if (sucursalSelected != null) {
-            txtIdSucursal.setText(String.valueOf(sucursalSelected.getIdSucursal()));
-            txtNombre.setText(sucursalSelected.getNombreSucursal());
+            txtNombre.setText(sucursalSelected.getNombre()); // Cambiado a "getNombre"
             txtLatitud.setText(sucursalSelected.getLatitud());
             txtLongitud.setText(sucursalSelected.getLongitud());
             txtFoto.setText(sucursalSelected.getFoto());
@@ -164,38 +142,205 @@ public class SucursalController {
             txtCalle.setText(sucursalSelected.getCalle());
             txtNumCalle.setText(sucursalSelected.getNumCalle());
             txtColonia.setText(sucursalSelected.getColonia());
-            txtEstatus.setSelected(sucursalSelected.getSucursalActivo() == 1);
 
-            // Selección del Estado basado en el nombre
             cbEstado.getSelectionModel().select(
                     cbEstado.getItems()
                             .stream()
-                            .filter(estado -> estado.getNombre().equals(sucursalSelected.getEstado()))
+                            .filter(estado -> estado.getIdEstado() == sucursalSelected.getEstado().getIdEstado())
                             .findFirst()
                             .orElse(null)
             );
 
-            // Selección de la Ciudad basada en el nombre
-            cbCiudad.getSelectionModel().select(sucursalSelected.getCiudad());
+            cbCiudad.getSelectionModel().select(
+                    cbCiudad.getItems()
+                            .stream()
+                            .filter(ciudad -> ciudad.getIdCiudad() == sucursalSelected.getCiudad().getIdCiudad())
+                            .findFirst()
+                            .orElse(null)
+            );
+
             btnGuardar.setText("Modificar");
+            btnCambiarEstatus.setVisible(true);
         }
     }
 
+
+    @FXML
     private void cleanForm() {
-        txtCalle.setText("");
-        txtColonia.setText("");
-        txtFoto.setText("");
-        txtHorarios.setText("");
-        txtIdSucursal.setText("");
-        txtLatitud.setText("");
-        txtLongitud.setText("");
-        txtNombre.setText("");
-        txtNumCalle.setText("");
-        txtUrl.setText("");
+        tblSucursales.getSelectionModel().clearSelection();
+        txtNombre.clear();
+        txtLatitud.clear();
+        txtLongitud.clear();
+        txtFoto.clear();
+        txtUrl.clear();
+        txtHorarios.clear();
+        txtCalle.clear();
+        txtNumCalle.clear();
+        txtColonia.clear();
         cbCiudad.getSelectionModel().clearSelection();
         cbEstado.getSelectionModel().clearSelection();
-        txtEstatus.setSelected(false);
-        btnGuardar.setDisable(false);
-        btnGuardar.setText("Guardar");
+        btnGuardar.setText("Agregar");
+        btnCambiarEstatus.setVisible(false);
+    }
+
+    @FXML
+    private void cambiarEstatus() {
+        if (sucursalSelected != null) {
+            int nuevoEstatus = sucursalSelected.getSucursalActivo() == 1 ? 0 : 1;
+            sucursalSelected.setSucursalActivo(nuevoEstatus);
+            Globals globals = new Globals();
+            new Thread(() -> {
+                try {
+                    Unirest.delete(globals.BASE_URL + "sucursal/delete/" + sucursalSelected.getIdSucursal()).asString();
+                    Platform.runLater(() -> {
+                        loadSucursales();
+                        cleanForm();
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println("Error al cambiar estatus: " + e.getMessage());
+                }
+            }).start();
+        }
+    }
+
+
+    @FXML
+    private void agregarSucursal() {
+        if (!validarCampos()) {
+            System.err.println("Por favor, completa todos los campos.");
+            return;
+        }
+        try {
+            // Crear una nueva instancia de Sucursal
+            Sucursal nuevaSucursal = new Sucursal();
+            nuevaSucursal.setNombre(txtNombre.getText()); // Cambiado a "nombre"
+            nuevaSucursal.setLatitud(txtLatitud.getText());
+            nuevaSucursal.setLongitud(txtLongitud.getText());
+            nuevaSucursal.setFoto(txtFoto.getText());
+            nuevaSucursal.setUrlWeb(txtUrl.getText());
+            nuevaSucursal.setHorarios(txtHorarios.getText());
+            nuevaSucursal.setCalle(txtCalle.getText());
+            nuevaSucursal.setNumCalle(txtNumCalle.getText());
+            nuevaSucursal.setColonia(txtColonia.getText());
+            nuevaSucursal.setSucursalActivo(1);
+
+            // Asignar la ciudad seleccionada
+            Ciudad ciudadSeleccionada = cbCiudad.getSelectionModel().getSelectedItem();
+            if (ciudadSeleccionada != null) {
+                nuevaSucursal.setCiudad(ciudadSeleccionada);
+            } else {
+                System.err.println("Por favor, selecciona una ciudad válida.");
+                return;
+            }
+
+            // Asignar el estado relacionado con la ciudad seleccionada
+            Estado estadoSeleccionado = cbEstado.getSelectionModel().getSelectedItem();
+            if (estadoSeleccionado != null) {
+                nuevaSucursal.setEstado(estadoSeleccionado);
+            } else {
+                System.err.println("Por favor, selecciona un estado válido.");
+                return;
+            }
+
+            // Convertir la sucursal a JSON y enviarla al API
+            Gson gson = new Gson();
+            String json = gson.toJson(nuevaSucursal);
+            HttpResponse<String> response = Unirest.post(new Globals().BASE_URL + "sucursal/add")
+                    .header("Content-Type", "application/json")
+                    .body(json)
+                    .asString();
+
+            // Verificar respuesta del API
+            if (response.getStatus() == 200) {
+                System.out.println("Sucursal agregada correctamente.");
+                loadSucursales();
+                cleanForm();
+            } else {
+                System.err.println("Error al agregar sucursal: " + response.getBody());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @FXML
+    private void modificarSucursal() {
+        if (sucursalSelected == null) {
+            System.err.println("No hay sucursal seleccionada para modificar.");
+            return;
+        }
+        if (!validarCampos()) {
+            System.err.println("Por favor, completa todos los campos.");
+            return;
+        }
+        try {
+            // Actualizar los campos de la sucursal seleccionada
+            sucursalSelected.setNombre(txtNombre.getText()); // Cambiado a "nombre"
+            sucursalSelected.setLatitud(txtLatitud.getText());
+            sucursalSelected.setLongitud(txtLongitud.getText());
+            sucursalSelected.setFoto(txtFoto.getText());
+            sucursalSelected.setUrlWeb(txtUrl.getText());
+            sucursalSelected.setHorarios(txtHorarios.getText());
+            sucursalSelected.setCalle(txtCalle.getText());
+            sucursalSelected.setNumCalle(txtNumCalle.getText());
+            sucursalSelected.setColonia(txtColonia.getText());
+
+            // Asignar la ciudad seleccionada
+            Ciudad ciudadSeleccionada = cbCiudad.getSelectionModel().getSelectedItem();
+            if (ciudadSeleccionada != null) {
+                sucursalSelected.setCiudad(ciudadSeleccionada);
+            } else {
+                System.err.println("Por favor, selecciona una ciudad válida.");
+                return;
+            }
+
+            // Asignar el estado relacionado con la ciudad seleccionada
+            Estado estadoSeleccionado = cbEstado.getSelectionModel().getSelectedItem();
+            if (estadoSeleccionado != null) {
+                sucursalSelected.setEstado(estadoSeleccionado);
+            } else {
+                System.err.println("Por favor, selecciona un estado válido.");
+                return;
+            }
+
+            // Convertir la sucursal modificada a JSON y enviarla al API
+            Gson gson = new Gson();
+            String json = gson.toJson(sucursalSelected);
+            HttpResponse<String> response = Unirest.put(new Globals().BASE_URL + "sucursal/update")
+                    .header("Content-Type", "application/json")
+                    .body(json)
+                    .asString();
+
+            // Verificar respuesta del API
+            if (response.getStatus() == 200) {
+                System.out.println("Sucursal modificada correctamente.");
+                loadSucursales();
+                cleanForm();
+            } else {
+                System.err.println("Error al modificar sucursal: " + response.getBody());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    @FXML
+    private void handleGuardar() {
+        if (btnGuardar.getText().equals("Agregar")) {
+            agregarSucursal();
+        } else if (btnGuardar.getText().equals("Modificar")) {
+            modificarSucursal();
+        }
+    }
+
+    private boolean validarCampos() {
+        return !(txtNombre.getText().isEmpty() || txtLatitud.getText().isEmpty() || txtLongitud.getText().isEmpty()
+                || txtFoto.getText().isEmpty() || txtUrl.getText().isEmpty() || txtHorarios.getText().isEmpty()
+                || txtCalle.getText().isEmpty() || txtNumCalle.getText().isEmpty() || txtColonia.getText().isEmpty()
+                || cbEstado.getSelectionModel().isEmpty() || cbCiudad.getSelectionModel().isEmpty());
     }
 }

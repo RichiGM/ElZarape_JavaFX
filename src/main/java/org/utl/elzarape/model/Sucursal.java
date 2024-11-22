@@ -2,7 +2,7 @@ package org.utl.elzarape.model;
 
 public class Sucursal {
     private int idSucursal;
-    private String nombreSucursal; // Ajustado al JSON
+    private String nombre; // Ajustado al JSON
     private String latitud;
     private String longitud;
     private String foto;
@@ -11,11 +11,10 @@ public class Sucursal {
     private String calle;
     private String numCalle;
     private String colonia;
-    private String ciudad; // Cambiado a String
-    private String estado; // Cambiado a String
+    private Ciudad ciudad; // Cambiado a String
+    private Estado estado; // Cambiado a String
     private int sucursalActivo;
 
-    // Getters y Setters
     public int getIdSucursal() {
         return idSucursal;
     }
@@ -24,12 +23,12 @@ public class Sucursal {
         this.idSucursal = idSucursal;
     }
 
-    public String getNombreSucursal() {
-        return nombreSucursal;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setNombreSucursal(String nombreSucursal) {
-        this.nombreSucursal = nombreSucursal;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getLatitud() {
@@ -96,19 +95,19 @@ public class Sucursal {
         this.colonia = colonia;
     }
 
-    public String getCiudad() {
+    public Ciudad getCiudad() {
         return ciudad;
     }
 
-    public void setCiudad(String ciudad) {
+    public void setCiudad(Ciudad ciudad) {
         this.ciudad = ciudad;
     }
 
-    public String getEstado() {
+    public Estado getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(Estado estado) {
         this.estado = estado;
     }
 
@@ -124,7 +123,7 @@ public class Sucursal {
     public String toString() {
         return "Sucursal{" +
                 "idSucursal=" + idSucursal +
-                ", nombreSucursal='" + nombreSucursal + '\'' +
+                ", nombre='" + nombre + '\'' +
                 ", latitud='" + latitud + '\'' +
                 ", longitud='" + longitud + '\'' +
                 ", foto='" + foto + '\'' +
@@ -133,8 +132,8 @@ public class Sucursal {
                 ", calle='" + calle + '\'' +
                 ", numCalle='" + numCalle + '\'' +
                 ", colonia='" + colonia + '\'' +
-                ", ciudad='" + ciudad + '\'' +
-                ", estado='" + estado + '\'' +
+                ", ciudad=" + ciudad +
+                ", estado=" + estado +
                 ", sucursalActivo=" + sucursalActivo +
                 '}';
     }
