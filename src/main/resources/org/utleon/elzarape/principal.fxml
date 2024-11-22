@@ -101,14 +101,14 @@
                 </HBox>
                 <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                     <children>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="120.0" text="Combos" textFill="WHITE" HBox.hgrow="ALWAYS">
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="120.0" text="Categorias" textFill="WHITE" HBox.hgrow="ALWAYS">
                             <font>
                                 <Font size="24.0" />
                             </font>
                         </Label>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
                             <image>
-                                <Image url="@img/combos.png" />
+                                <Image url="@img/categorias.png" />
                             </image>
                             <HBox.margin>
                                 <Insets left="10.0" />
