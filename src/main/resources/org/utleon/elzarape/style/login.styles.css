@@ -1,0 +1,54 @@
+/* Contenedor de login con transparencia */
+.login-container {
+    -fx-background-color: rgba(51, 51, 51, 0.8); /* Color gris con transparencia */
+    -fx-background-radius: 10; /* Bordes redondeados */
+    -fx-border-width: 2; /* Grosor del borde */
+    -fx-padding: 20; /* Espaciado interno */
+    -fx-alignment: center; /* Centrar contenido interno */
+}
+
+/* Estilos del fondo */
+.root {
+    -fx-background-image: url('../img/food-background.png');
+    -fx-background-size: cover;
+    -fx-background-position: center; /* Centrar la imagen */
+}
+
+/* Texto del título */
+.login-title {
+    -fx-fill: orange;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* Campos de texto */
+.text-field, .password-field {
+    -fx-prompt-text-fill: gray;
+    -fx-border-color: lightgray;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10; /* Relleno interno */
+    -fx-background-color: white;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: orange; /* Cambia el color del borde al enfocar */
+    -fx-background-color: #f9f9f9; /* Fondo más claro */
+}
+
+/* Botón de login */
+.login-button {
+    -fx-background-color: orange;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-cursor: hand; /* Cambiar el cursor al pasar sobre el botón */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0, 0, 2); /* Sombra ligera */
+}
+
+.login-button:hover {
+    -fx-background-color: darkorange;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 4); /* Sombra más pronunciada */
+    -fx-scale-x: 1.05; /* Efecto de agrandamiento */
+    -fx-scale-y: 1.05;
+}

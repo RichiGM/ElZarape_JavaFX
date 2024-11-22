@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@style/styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.utl.elzarape.PrincipalController">
+    <left>
+        <VBox prefHeight="700.0" prefWidth="238.0" styleClass="menu-bar" BorderPane.alignment="CENTER">
+            <children>
+                <HBox fx:id="homeItemBar" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="120.0" text="Home" textFill="WHITE" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Label>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                            <image>
+                                <Image url="@img/home.png" />
+                            </image>
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </ImageView>
+                    </children>
+                    <styleClass>
+                        <String fx:value="menu-bar-item" />
+                        <String fx:value="menu-bar-item" />
+                    </styleClass>
+                </HBox>
+                <HBox fx:id="sucursalItemBar" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="120.0" text="Sucursales" textFill="WHITE" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Label>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                            <image>
+                                <Image url="@img/sucursal.png" />
+                            </image>
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </ImageView>
+                    </children>
+                    <styleClass>
+                        <String fx:value="menu-bar-item" />
+                        <String fx:value="menu-bar-item" />
+                    </styleClass>
+                </HBox>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="120.0" text="Alimentos" textFill="WHITE" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Label>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                            <image>
+                                <Image url="@img/alimentos.png" />
+                            </image>
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </ImageView>
+                    </children>
+                    <styleClass>
+                        <String fx:value="menu-bar-item" />
+                        <String fx:value="menu-bar-item" />
+                    </styleClass>
+                </HBox>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="120.0" text="Bebidas" textFill="WHITE" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Label>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                            <image>
+                                <Image url="@img/bebidas.png" />
+                            </image>
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </ImageView>
+                    </children>
+                    <styleClass>
+                        <String fx:value="menu-bar-item" />
+                        <String fx:value="menu-bar-item" />
+                    </styleClass>
+                </HBox>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="120.0" text="Combos" textFill="WHITE" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Label>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                            <image>
+                                <Image url="@img/combos.png" />
+                            </image>
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </ImageView>
+                    </children>
+                    <styleClass>
+                        <String fx:value="menu-bar-item" />
+                        <String fx:value="menu-bar-item" />
+                    </styleClass>
+                </HBox>
+                <HBox fx:id="salirItemBar" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="120.0" text="Salir" textFill="WHITE" HBox.hgrow="ALWAYS">
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Label>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                            <image>
+                                <Image url="@img/close.png" />
+                            </image>
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </ImageView>
+                    </children>
+                    <styleClass>
+                        <String fx:value="menu-bar-item" />
+                        <String fx:value="menu-bar-item" />
+                    </styleClass>
+                </HBox>
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <!-- Cambiado para adaptarse automáticamente al espacio disponible -->
+        <AnchorPane fx:id="mainContainer" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Bienvenido al sistema" layoutX="50.0" layoutY="50.0" />
+            </children>
+        </AnchorPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="500.0" prefWidth="700.0" stylesheets="@style/login.styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.utl.elzarape.LoginController">
+    <children>
+        <!-- Contenedor del cuadro de login -->
+        <VBox alignment="CENTER" prefHeight="250.0" prefWidth="300.0" spacing="20" styleClass="login-container" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="150.0">
+            <!-- Título -->
+            <Text styleClass="login-title" text="Iniciar Sesión" />
+            <!-- Campos de entrada -->
+            <TextField fx:id="txtUsuario" promptText="Usuario" styleClass="text-field" />
+            <PasswordField fx:id="txtPassword" promptText="Contraseña" styleClass="password-field" />
+            <!-- Botón -->
+            <Button fx:id="btnEntrar" styleClass="login-button" text="Entrar" />
+        </VBox>
+    </children>
+</AnchorPane>
