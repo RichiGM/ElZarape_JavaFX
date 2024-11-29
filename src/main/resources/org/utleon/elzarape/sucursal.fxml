@@ -21,32 +21,39 @@
             <Label text="Longitud:" GridPane.rowIndex="2" />
             <TextField fx:id="txtLongitud" GridPane.columnIndex="1" GridPane.rowIndex="2" prefWidth="200" maxWidth="200" />
 
-            <Label text="Foto (URL):" GridPane.rowIndex="3" />
-            <TextField fx:id="txtFoto" GridPane.columnIndex="1" GridPane.rowIndex="3" prefWidth="200" maxWidth="200" />
+            <Label text="Foto:" GridPane.rowIndex="3" />
+            <HBox GridPane.columnIndex="1" GridPane.rowIndex="3" spacing="10">
+                <children>
+                    <Button fx:id="btnCargarImagen" text="Cargar Imagen" onAction="#cargarImagen" />
+                </children>
+            </HBox>
 
-            <Label text="URL Web:" GridPane.rowIndex="4" />
-            <TextField fx:id="txtUrl" GridPane.columnIndex="1" GridPane.rowIndex="4" prefWidth="200" maxWidth="200" />
+            <!-- Label para estado de imagen -->
+            <Label fx:id="lblEstadoImagen" text="No se ha cargado ninguna imagen" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-            <Label text="Horarios:" GridPane.rowIndex="5" />
-            <TextField fx:id="txtHorarios" GridPane.columnIndex="1" GridPane.rowIndex="5" prefWidth="200" maxWidth="200" />
+            <Label text="URL Web:" GridPane.rowIndex="5" />
+            <TextField fx:id="txtUrl" GridPane.columnIndex="1" GridPane.rowIndex="5" prefWidth="200" maxWidth="200" />
 
-            <Label text="Calle:" GridPane.rowIndex="6" />
-            <TextField fx:id="txtCalle" GridPane.columnIndex="1" GridPane.rowIndex="6" prefWidth="200" maxWidth="200" />
+            <Label text="Horarios:" GridPane.rowIndex="6" />
+            <TextField fx:id="txtHorarios" GridPane.columnIndex="1" GridPane.rowIndex="6" prefWidth="200" maxWidth="200" />
 
-            <Label text="Número de Calle:" GridPane.rowIndex="7" />
-            <TextField fx:id="txtNumCalle" GridPane.columnIndex="1" GridPane.rowIndex="7" prefWidth="200" maxWidth="200" />
+            <Label text="Calle:" GridPane.rowIndex="7" />
+            <TextField fx:id="txtCalle" GridPane.columnIndex="1" GridPane.rowIndex="7" prefWidth="200" maxWidth="200" />
 
-            <Label text="Colonia:" GridPane.rowIndex="8" />
-            <TextField fx:id="txtColonia" GridPane.columnIndex="1" GridPane.rowIndex="8" prefWidth="200" maxWidth="200" />
+            <Label text="Número de Calle:" GridPane.rowIndex="8" />
+            <TextField fx:id="txtNumCalle" GridPane.columnIndex="1" GridPane.rowIndex="8" prefWidth="200" maxWidth="200" />
 
-            <Label text="Estado:" GridPane.rowIndex="9" />
-            <ComboBox fx:id="cbEstado" onAction="#onEstadoSelected" GridPane.columnIndex="1" GridPane.rowIndex="9" prefWidth="200" maxWidth="200" />
+            <Label text="Colonia:" GridPane.rowIndex="9" />
+            <TextField fx:id="txtColonia" GridPane.columnIndex="1" GridPane.rowIndex="9" prefWidth="200" maxWidth="200" />
 
-            <Label text="Ciudad:" GridPane.rowIndex="10" />
-            <ComboBox fx:id="cbCiudad" GridPane.columnIndex="1" GridPane.rowIndex="10" prefWidth="200" maxWidth="200" />
+            <Label text="Estado:" GridPane.rowIndex="10" />
+            <ComboBox fx:id="cbEstado" onAction="#onEstadoSelected" GridPane.columnIndex="1" GridPane.rowIndex="10" prefWidth="200" maxWidth="200" />
+
+            <Label text="Ciudad:" GridPane.rowIndex="11" />
+            <ComboBox fx:id="cbCiudad" GridPane.columnIndex="1" GridPane.rowIndex="11" prefWidth="200" maxWidth="200" />
 
             <!-- Botones -->
-            <HBox spacing="10" GridPane.rowIndex="11" GridPane.columnIndex="1" alignment="CENTER_LEFT">
+            <HBox spacing="10" GridPane.rowIndex="12" GridPane.columnIndex="1" alignment="CENTER_LEFT">
                 <children>
                     <Button fx:id="btnGuardar" text="Agregar" onAction="#handleGuardar" />
                     <Button fx:id="btnLimpiar" onAction="#cleanForm" text="Limpiar" />
@@ -54,17 +61,22 @@
             </HBox>
 
             <!-- Botón Cambiar Estatus -->
-            <Button fx:id="btnCambiarEstatus" onAction="#cambiarEstatus" text="Cambiar Estatus" GridPane.rowIndex="12" GridPane.columnIndex="1" visible="false" />
+            <Button fx:id="btnCambiarEstatus" onAction="#cambiarEstatus" text="Cambiar Estatus" GridPane.rowIndex="13" GridPane.columnIndex="1" visible="false" />
         </GridPane>
 
         <AnchorPane layoutX="330.0" layoutY="20.0" prefHeight="444.0" prefWidth="600.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="400.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="60.0">
             <children>
+                <!-- Título -->
                 <Label alignment="CENTER" text="Gestión de Sucursales" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <font>
                         <Font name="DIN Alternate Bold" size="24.0" />
                     </font>
                 </Label>
-                <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+
+                <!-- Campo de búsqueda sobre la tabla -->
+                <TextField fx:id="txtBuscar" promptText="Buscar sucursales..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" />
+
+                <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
                     <content>
                         <TableView fx:id="tblSucursales">
                             <columns>
@@ -79,3 +91,4 @@
         </AnchorPane>
     </children>
 </AnchorPane>
+

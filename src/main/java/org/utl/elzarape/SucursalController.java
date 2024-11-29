@@ -8,12 +8,16 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import javafx.stage.FileChooser;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.utl.elzarape.model.Ciudad;
 import org.utl.elzarape.model.Estado;
 import org.utl.elzarape.model.Sucursal;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Base64;
 import java.util.List;
 
 public class SucursalController {
@@ -40,20 +44,41 @@ public class SucursalController {
     private TextField txtNombre, txtCalle, txtNumCalle, txtColonia, txtLatitud, txtLongitud, txtFoto, txtUrl, txtHorarios;
 
     @FXML
-    private CheckBox txtEstatus;
+    private TextField txtBuscar;
+
+    @FXML
+    private Button btnCargarImagen;
+
+    @FXML
+    private Label lblEstadoImagen;
+
+    private String imagenBase64 = ""; // Variable para almacenar la imagen en Base64
+
 
     private ObservableList<Sucursal> sucursales;
     private ObservableList<Ciudad> ciudades;
     private Sucursal sucursalSelected = null;
 
     @FXML
-    public void initialize() {
+    private void initialize() {
         System.out.println("Inicializando SucursalController...");
         initColumns();
         loadSucursales();
         loadEstados();
+
+        // Escuchar cambios en el campo de búsqueda
+        txtBuscar.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.isEmpty()) {
+                // Si el filtro está vacío, recargar todas las sucursales
+                loadSucursales();
+            } else {
+                buscarSucursales(newValue); // Buscar con el filtro
+            }
+        });
+
         tblSucursales.setOnMouseClicked(event -> showSucursalSelected());
     }
+
 
     @FXML
     private void initColumns() {
@@ -71,6 +96,27 @@ public class SucursalController {
         tblSucursales.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
+    private void buscarSucursales(String filtro) {
+        Globals globals = new Globals();
+        new Thread(() -> {
+            try {
+                String url = filtro.isEmpty()
+                        ? globals.BASE_URL + "sucursal/getall" // Si no hay filtro, cargar todas las sucursales
+                        : globals.BASE_URL + "sucursal/search/" + filtro; // Si hay filtro, usar la API de búsqueda
+
+                HttpResponse<String> response = Unirest.get(url).asString();
+                Gson gson = new Gson();
+                Sucursal[] sucursalArray = gson.fromJson(response.getBody(), Sucursal[].class);
+
+                // Actualizar la tabla con los resultados
+                ObservableList<Sucursal> resultados = FXCollections.observableArrayList(List.of(sucursalArray));
+                Platform.runLater(() -> tblSucursales.setItems(resultados));
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Error al buscar sucursales: " + e.getMessage());
+            }
+        }).start();
+    }
 
     private void loadSucursales() {
         Globals globals = new Globals();
@@ -80,6 +126,16 @@ public class SucursalController {
                 System.out.println("JSON recibido: " + response.getBody());
                 Gson gson = new Gson();
                 Sucursal[] sucursalArray = gson.fromJson(response.getBody(), Sucursal[].class);
+
+                // Actualizar el estado de las sucursales
+                for (Sucursal sucursal : sucursalArray) {
+                    if (sucursal.getSucursalActivo() == 1) {
+                        sucursal.setSucursalActivo(1); // Activo
+                    } else {
+                        sucursal.setSucursalActivo(0); // Inactivo
+                    }
+                }
+
                 sucursales = FXCollections.observableArrayList(List.of(sucursalArray));
                 Platform.runLater(() -> tblSucursales.setItems(sucursales));
             } catch (Exception e) {
@@ -88,6 +144,7 @@ public class SucursalController {
             }
         }).start();
     }
+
 
     private void loadEstados() {
         Globals globals = new Globals();
@@ -109,40 +166,24 @@ public class SucursalController {
     private void onEstadoSelected() {
         Estado selectedEstado = cbEstado.getSelectionModel().getSelectedItem();
         if (selectedEstado != null) {
-            loadCiudadesByEstado(selectedEstado.getIdEstado());
+            loadCiudadesByEstado(selectedEstado.getIdEstado(), null);
         }
-    }
-
-    private void loadCiudadesByEstado(int idEstado) {
-        Globals globals = new Globals();
-        new Thread(() -> {
-            try {
-                HttpResponse<String> response = Unirest.get(globals.BASE_URL + "sucursal/getciudades/" + idEstado).asString();
-                Gson gson = new Gson();
-                Ciudad[] ciudadArray = gson.fromJson(response.getBody(), Ciudad[].class);
-                ObservableList<Ciudad> ciudadList = FXCollections.observableArrayList(List.of(ciudadArray));
-                Platform.runLater(() -> cbCiudad.setItems(ciudadList));
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.err.println("Error al cargar ciudades: " + e.getMessage());
-            }
-        }).start();
     }
 
     @FXML
     private void showSucursalSelected() {
         sucursalSelected = tblSucursales.getSelectionModel().getSelectedItem();
         if (sucursalSelected != null) {
-            txtNombre.setText(sucursalSelected.getNombre()); // Cambiado a "getNombre"
+            txtNombre.setText(sucursalSelected.getNombre());
             txtLatitud.setText(sucursalSelected.getLatitud());
             txtLongitud.setText(sucursalSelected.getLongitud());
-            txtFoto.setText(sucursalSelected.getFoto());
             txtUrl.setText(sucursalSelected.getUrlWeb());
             txtHorarios.setText(sucursalSelected.getHorarios());
             txtCalle.setText(sucursalSelected.getCalle());
             txtNumCalle.setText(sucursalSelected.getNumCalle());
             txtColonia.setText(sucursalSelected.getColonia());
 
+            // Seleccionar el estado
             cbEstado.getSelectionModel().select(
                     cbEstado.getItems()
                             .stream()
@@ -151,18 +192,67 @@ public class SucursalController {
                             .orElse(null)
             );
 
-            cbCiudad.getSelectionModel().select(
-                    cbCiudad.getItems()
-                            .stream()
-                            .filter(ciudad -> ciudad.getIdCiudad() == sucursalSelected.getCiudad().getIdCiudad())
-                            .findFirst()
-                            .orElse(null)
-            );
+            // Cargar las ciudades del estado seleccionado y luego seleccionar la ciudad
+            Estado selectedEstado = sucursalSelected.getEstado();
+            if (selectedEstado != null) {
+                loadCiudadesByEstado(selectedEstado.getIdEstado(), () -> {
+                    Platform.runLater(() -> {
+                        cbCiudad.getSelectionModel().select(
+                                cbCiudad.getItems()
+                                        .stream()
+                                        .filter(ciudad -> ciudad.getIdCiudad() == sucursalSelected.getCiudad().getIdCiudad())
+                                        .findFirst()
+                                        .orElse(null)
+                        );
+                    });
+                });
+            }
+
+            // Verificar y cargar la imagen
+            if (sucursalSelected.getFoto() != null && !sucursalSelected.getFoto().isEmpty()) {
+                // Si la imagen no tiene el prefijo, agregarlo
+                if (!sucursalSelected.getFoto().startsWith("data:image")) {
+                    imagenBase64 = "data:image/jpeg;base64," + sucursalSelected.getFoto();
+                } else {
+                    imagenBase64 = sucursalSelected.getFoto();
+                }
+                lblEstadoImagen.setText("Imagen cargada desde el registro seleccionado");
+            } else {
+                imagenBase64 = ""; // Vaciar la imagen si no existe
+                lblEstadoImagen.setText("No se ha cargado ninguna imagen");
+            }
 
             btnGuardar.setText("Modificar");
             btnCambiarEstatus.setVisible(true);
         }
     }
+
+
+
+
+
+    private void loadCiudadesByEstado(int idEstado, Runnable onComplete) {
+        Globals globals = new Globals();
+        new Thread(() -> {
+            try {
+                HttpResponse<String> response = Unirest.get(globals.BASE_URL + "sucursal/getciudades/" + idEstado).asString();
+                Gson gson = new Gson();
+                Ciudad[] ciudadArray = gson.fromJson(response.getBody(), Ciudad[].class);
+                ObservableList<Ciudad> ciudadList = FXCollections.observableArrayList(List.of(ciudadArray));
+                Platform.runLater(() -> {
+                    cbCiudad.setItems(ciudadList);
+                    if (onComplete != null) {
+                        onComplete.run(); // Ejecuta el Runnable cuando las ciudades se hayan cargado
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Error al cargar ciudades: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
 
 
     @FXML
@@ -171,7 +261,8 @@ public class SucursalController {
         txtNombre.clear();
         txtLatitud.clear();
         txtLongitud.clear();
-        txtFoto.clear();
+        lblEstadoImagen.setText("No se ha cargado ninguna imagen");
+        imagenBase64 = "";
         txtUrl.clear();
         txtHorarios.clear();
         txtCalle.clear();
@@ -182,6 +273,7 @@ public class SucursalController {
         btnGuardar.setText("Agregar");
         btnCambiarEstatus.setVisible(false);
     }
+
 
     @FXML
     private void cambiarEstatus() {
@@ -207,6 +299,10 @@ public class SucursalController {
 
     @FXML
     private void agregarSucursal() {
+        if (imagenBase64.isEmpty()) {
+            lblEstadoImagen.setText("Debe cargar una imagen válida antes de continuar.");
+            return;
+        }
         if (!validarCampos()) {
             System.err.println("Por favor, completa todos los campos.");
             return;
@@ -217,7 +313,7 @@ public class SucursalController {
             nuevaSucursal.setNombre(txtNombre.getText()); // Cambiado a "nombre"
             nuevaSucursal.setLatitud(txtLatitud.getText());
             nuevaSucursal.setLongitud(txtLongitud.getText());
-            nuevaSucursal.setFoto(txtFoto.getText());
+            nuevaSucursal.setFoto(imagenBase64);
             nuevaSucursal.setUrlWeb(txtUrl.getText());
             nuevaSucursal.setHorarios(txtHorarios.getText());
             nuevaSucursal.setCalle(txtCalle.getText());
@@ -267,6 +363,10 @@ public class SucursalController {
 
     @FXML
     private void modificarSucursal() {
+        if (imagenBase64.isEmpty()) {
+            lblEstadoImagen.setText("Debe cargar una imagen válida antes de continuar.");
+            return;
+        }
         if (sucursalSelected == null) {
             System.err.println("No hay sucursal seleccionada para modificar.");
             return;
@@ -275,12 +375,13 @@ public class SucursalController {
             System.err.println("Por favor, completa todos los campos.");
             return;
         }
+
         try {
             // Actualizar los campos de la sucursal seleccionada
             sucursalSelected.setNombre(txtNombre.getText()); // Cambiado a "nombre"
             sucursalSelected.setLatitud(txtLatitud.getText());
             sucursalSelected.setLongitud(txtLongitud.getText());
-            sucursalSelected.setFoto(txtFoto.getText());
+            sucursalSelected.setFoto(imagenBase64);
             sucursalSelected.setUrlWeb(txtUrl.getText());
             sucursalSelected.setHorarios(txtHorarios.getText());
             sucursalSelected.setCalle(txtCalle.getText());
@@ -339,8 +440,57 @@ public class SucursalController {
 
     private boolean validarCampos() {
         return !(txtNombre.getText().isEmpty() || txtLatitud.getText().isEmpty() || txtLongitud.getText().isEmpty()
-                || txtFoto.getText().isEmpty() || txtUrl.getText().isEmpty() || txtHorarios.getText().isEmpty()
+                 || txtUrl.getText().isEmpty() || txtHorarios.getText().isEmpty()
                 || txtCalle.getText().isEmpty() || txtNumCalle.getText().isEmpty() || txtColonia.getText().isEmpty()
                 || cbEstado.getSelectionModel().isEmpty() || cbCiudad.getSelectionModel().isEmpty());
     }
+
+    @FXML
+    private void cargarImagen() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleccionar Imagen");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg", "*.bmp", "*.gif")
+        );
+
+        File archivoSeleccionado = fileChooser.showOpenDialog(btnCargarImagen.getScene().getWindow());
+        if (archivoSeleccionado != null) {
+            try {
+                // Convertir la imagen a Base64
+                FileInputStream fis = new FileInputStream(archivoSeleccionado);
+                byte[] datos = fis.readAllBytes();
+
+                // Determinar el tipo de archivo para el prefijo
+                String extension = archivoSeleccionado.getName().substring(archivoSeleccionado.getName().lastIndexOf('.') + 1).toLowerCase();
+                String mimeType;
+                switch (extension) {
+                    case "png":
+                        mimeType = "data:image/png;base64,";
+                        break;
+                    case "gif":
+                        mimeType = "data:image/gif;base64,";
+                        break;
+                    case "bmp":
+                        mimeType = "data:image/bmp;base64,";
+                        break;
+                    default:
+                        mimeType = "data:image/jpeg;base64,"; // Asumimos que JPEG es el tipo por defecto
+                }
+
+                imagenBase64 = mimeType + Base64.getEncoder().encodeToString(datos);
+
+                // Actualizar el Label para indicar que la imagen se cargó
+                lblEstadoImagen.setText("Imagen cargada correctamente");
+
+                System.out.println("Imagen convertida a Base64: " + imagenBase64.substring(0, 50) + "..."); // Depuración
+            } catch (Exception e) {
+                e.printStackTrace();
+                lblEstadoImagen.setText("Error al cargar la imagen");
+            }
+        } else {
+            lblEstadoImagen.setText("No se seleccionó ninguna imagen");
+        }
+    }
+
+
 }
