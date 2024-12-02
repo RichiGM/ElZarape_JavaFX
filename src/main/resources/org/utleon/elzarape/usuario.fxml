@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="500.0" prefWidth="1000.0" stylesheets="@style/styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.utl.elzarape.UsuarioController">
+    <children>
+        <GridPane alignment="center" hgap="10" vgap="10" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" minWidth="100" />
+                <ColumnConstraints halignment="LEFT" minWidth="200" />
+            </columnConstraints>
+
+            <!-- Labels and Fields -->
+            <Label text="Nombre de Usuario:" GridPane.rowIndex="1" />
+            <TextField fx:id="txtNombreUsuario" maxWidth="200" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label text="Contraseña:" GridPane.rowIndex="2" />
+
+            <Label text="Nombre:" GridPane.rowIndex="4" />
+            <TextField fx:id="txtNombre" maxWidth="200" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+            <Label text="Apellidos:" GridPane.rowIndex="5" />
+            <TextField fx:id="txtApellidos" maxWidth="200" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+            <Label text="Teléfono:" GridPane.rowIndex="6" />
+            <TextField fx:id="txtTelefono" maxWidth="200" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+            <Label text="Estado:" GridPane.rowIndex="7" />
+            <ComboBox fx:id="cbEstado" maxWidth="200" onAction="#onEstadoSelected" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+
+            <Label text="Ciudad:" GridPane.rowIndex="8" />
+            <ComboBox fx:id="cbCiudad" maxWidth="200" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+
+            <!-- Botones -->
+            <HBox alignment="CENTER_LEFT" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                <children>
+                    <Button fx:id="btnGuardar" onAction="#onGuardar" text="Agregar" />
+                    <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" />
+                </children>
+            </HBox>
+
+            <!-- Botón Cambiar Estatus -->
+            <Button fx:id="btnCambiarEstatus" onAction="#onCambiarEstatus" text="Cambiar Estatus" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+         <Label text="Tipo de Entidad:" GridPane.rowIndex="9" />
+         <ComboBox fx:id="cbTipoEntidad" maxWidth="200" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+         <HBox alignment="CENTER" cache="true" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <children>
+               <Button fx:id="btnGenerarContrasenia" onAction="#onGenerarContrasenia" text="Generar Contraseña" />
+               <ToggleButton fx:id="btnVerContrasenia" mnemonicParsing="false" onAction="#onMostrarContrasenia" text="👁" />
+            </children>
+         </HBox>
+         <HBox fx:id="hBoxSucursal" alignment="CENTER" cache="true" spacing="10" GridPane.columnSpan="2147483647" GridPane.rowIndex="10">
+            <children>
+               <Label fx:id="lbSucursal" text="Sucursal:" />
+               <ComboBox fx:id="cbSucursal" maxWidth="200" prefWidth="200" />
+            </children>
+            <padding>
+               <Insets left="60.0" />
+            </padding>
+         </HBox>
+         <PasswordField fx:id="txtContrasenia" visible="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+         <TextField fx:id="txtContraseniaVisible" maxWidth="200" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
+        </GridPane>
+
+        <AnchorPane layoutX="330.0" layoutY="20.0" prefHeight="444.0" prefWidth="600.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="400.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="60.0">
+            <children>
+                <Label alignment="CENTER" text="Gestión de Usuarios" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <font>
+                        <Font name="DIN Alternate Bold" size="24.0" />
+                    </font>
+                </Label>
+            <TextField fx:id="txtBuscar" promptText="Buscar usuarios..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" />
+
+                <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
+                    <content>
+                        <TableView fx:id="tblUsuarios">
+                            <columns>
+                                <TableColumn fx:id="colNombreUsuario" text="Nombre Usuario" />
+                                <TableColumn fx:id="colContrasenia" text="Contraseña" />
+                                <TableColumn fx:id="colNombre" text="Nombre" />
+                        <TableColumn fx:id="colApellidos" text="Apellidos" />
+                        <TableColumn fx:id="colTelefono" text="Teléfono" />
+                        <TableColumn fx:id="colCiudad" text="Ciudad" />
+                        <TableColumn fx:id="colTipoEntidad" text="Tipo de Entidad" />
+                        <TableColumn fx:id="colSucursal" text="Sucursal" />
+                        <TableColumn fx:id="colEstatus" text="Estatus" />
+                            </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                        </TableView>
+                    </content>
+                </ScrollPane>
+            </children>
+        </AnchorPane>
+    </children>
+</AnchorPane>

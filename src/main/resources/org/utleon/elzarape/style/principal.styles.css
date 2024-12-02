@@ -1,0 +1,18 @@
+/* Fondo */
+.root {
+    -fx-background-color: #fef3e2;
+}
+/* Estilos para la barra de menú */
+.menu-bar {
+    -fx-background-color: #fa812f;
+}
+
+.menu-bar-item {
+    -fx-background-color: #fa812f;
+}
+
+.menu-bar-item:hover {
+    -fx-background-color: coral;
+}
+
+

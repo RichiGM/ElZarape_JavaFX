@@ -1,18 +1,43 @@
-/* Fondo */
-.root {
-    -fx-background-color: #fef3e2;
-}
-/* Estilos para la barra de menú */
-.menu-bar {
-    -fx-background-color: #fa812f;
+
+
+/* Campos de texto */
+.text-field, .text-area, .combo-box {
+    -fx-border-color: #C60000; /* Red Pepper */
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
 }
 
-.menu-bar-item {
-    -fx-background-color: #fa812f;
+.text-field:focused, .text-area:focused, .combo-box:focused {
+    -fx-border-color: #805A3B; /* Driftwood */
 }
 
-.menu-bar-item:hover {
-    -fx-background-color: coral;
+.my-text-field {
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5;
+}
+
+/* Botones */
+.button {
+    -fx-background-color: #C60000; /* Red Pepper */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5;
+    -fx-padding: 5 15; /* Ajuste para reducir el ancho */
+}
+
+.button:hover {
+    -fx-background-color: #FD974F; /* Onion */
+}
+
+.button:pressed {
+    -fx-background-color: #805A3B; /* Driftwood */
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-padding: 5; /* Ajuste de tamaño */
 }
 
 

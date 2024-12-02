@@ -8,7 +8,7 @@ module org.utleon.elzarape {
     exports org.utl.elzarape;
     exports org.utl.elzarape.model;
 
-    // Abre los paquetes necesarios para JavaFX
+    // Abre los paquetes necesarios para JavaFX y Gson
     opens org.utl.elzarape to javafx.fxml;
-    opens org.utl.elzarape.model to javafx.fxml;
+    opens org.utl.elzarape.model to javafx.fxml, com.google.gson;
 }

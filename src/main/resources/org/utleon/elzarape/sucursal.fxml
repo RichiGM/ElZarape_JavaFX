@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="1000.0" stylesheets="@style/sucursal.styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.utl.elzarape.SucursalController">
+<AnchorPane prefHeight="500.0" prefWidth="1000.0" stylesheets="@style/styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.utl.elzarape.SucursalController">
     <children>
         <GridPane alignment="center" hgap="10" vgap="10" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
             <columnConstraints>

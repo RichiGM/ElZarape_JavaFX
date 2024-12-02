@@ -287,12 +287,15 @@ public class SucursalController {
                     Platform.runLater(() -> {
                         loadSucursales();
                         cleanForm();
+                        showAlert(Alert.AlertType.INFORMATION, "Éxito", "Estatus cambiado correctamente.");
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
-                    System.err.println("Error al cambiar estatus: " + e.getMessage());
+                    showAlert(Alert.AlertType.ERROR, "Error", "Hubo un error al cambiar el estatus.");
                 }
             }).start();
+        } else {
+            showAlert(Alert.AlertType.WARNING, "Advertencia", "Seleccione una sucursal para cambiar el estatus.");
         }
     }
 
@@ -304,13 +307,13 @@ public class SucursalController {
             return;
         }
         if (!validarCampos()) {
-            System.err.println("Por favor, completa todos los campos.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Por favor, completa todos los campos.");
             return;
         }
         try {
             // Crear una nueva instancia de Sucursal
             Sucursal nuevaSucursal = new Sucursal();
-            nuevaSucursal.setNombre(txtNombre.getText()); // Cambiado a "nombre"
+            nuevaSucursal.setNombre(txtNombre.getText());
             nuevaSucursal.setLatitud(txtLatitud.getText());
             nuevaSucursal.setLongitud(txtLongitud.getText());
             nuevaSucursal.setFoto(imagenBase64);
@@ -326,7 +329,7 @@ public class SucursalController {
             if (ciudadSeleccionada != null) {
                 nuevaSucursal.setCiudad(ciudadSeleccionada);
             } else {
-                System.err.println("Por favor, selecciona una ciudad válida.");
+                showAlert(Alert.AlertType.ERROR, "Error", "Por favor, selecciona una ciudad válida.");
                 return;
             }
 
@@ -335,7 +338,7 @@ public class SucursalController {
             if (estadoSeleccionado != null) {
                 nuevaSucursal.setEstado(estadoSeleccionado);
             } else {
-                System.err.println("Por favor, selecciona un estado válido.");
+                showAlert(Alert.AlertType.ERROR, "Error", "Por favor, selecciona un estado válido.");
                 return;
             }
 
@@ -349,14 +352,15 @@ public class SucursalController {
 
             // Verificar respuesta del API
             if (response.getStatus() == 200) {
-                System.out.println("Sucursal agregada correctamente.");
+                showAlert(Alert.AlertType.INFORMATION, "Éxito", "Sucursal agregada correctamente.");
                 loadSucursales();
                 cleanForm();
             } else {
-                System.err.println("Error al agregar sucursal: " + response.getBody());
+                showAlert(Alert.AlertType.ERROR, "Error", "Error al agregar sucursal: " + response.getBody());
             }
         } catch (Exception e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Hubo un error al agregar la sucursal.");
         }
     }
 
@@ -368,24 +372,24 @@ public class SucursalController {
             return;
         }
         if (sucursalSelected == null) {
-            System.err.println("No hay sucursal seleccionada para modificar.");
+            showAlert(Alert.AlertType.ERROR, "Error", "No hay sucursal seleccionada para modificar.");
             return;
         }
         if (!validarCampos()) {
-            System.err.println("Por favor, completa todos los campos.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Por favor, completa todos los campos.");
             return;
         }
 
         try {
             // Actualizar los campos de la sucursal seleccionada
-            sucursalSelected.setNombre(txtNombre.getText()); // Cambiado a "nombre"
+            sucursalSelected.setNombre(txtNombre.getText());
             sucursalSelected.setLatitud(txtLatitud.getText());
             sucursalSelected.setLongitud(txtLongitud.getText());
             sucursalSelected.setFoto(imagenBase64);
             sucursalSelected.setUrlWeb(txtUrl.getText());
             sucursalSelected.setHorarios(txtHorarios.getText());
             sucursalSelected.setCalle(txtCalle.getText());
-            sucursalSelected.setNumCalle(txtNumCalle.getText());
+            sucursalSelected.setNumCalle(txtNumCalle .getText());
             sucursalSelected.setColonia(txtColonia.getText());
 
             // Asignar la ciudad seleccionada
@@ -393,7 +397,7 @@ public class SucursalController {
             if (ciudadSeleccionada != null) {
                 sucursalSelected.setCiudad(ciudadSeleccionada);
             } else {
-                System.err.println("Por favor, selecciona una ciudad válida.");
+                showAlert(Alert.AlertType.ERROR, "Error", "Por favor, selecciona una ciudad válida.");
                 return;
             }
 
@@ -402,7 +406,7 @@ public class SucursalController {
             if (estadoSeleccionado != null) {
                 sucursalSelected.setEstado(estadoSeleccionado);
             } else {
-                System.err.println("Por favor, selecciona un estado válido.");
+                showAlert(Alert.AlertType.ERROR, "Error", "Por favor, selecciona un estado válido.");
                 return;
             }
 
@@ -416,14 +420,15 @@ public class SucursalController {
 
             // Verificar respuesta del API
             if (response.getStatus() == 200) {
-                System.out.println("Sucursal modificada correctamente.");
+                showAlert(Alert.AlertType.INFORMATION, "Éxito", "Sucursal modificada correctamente.");
                 loadSucursales();
                 cleanForm();
             } else {
-                System.err.println("Error al modificar sucursal: " + response.getBody());
+                showAlert(Alert.AlertType.ERROR, "Error", "Error al modificar sucursal: " + response.getBody());
             }
         } catch (Exception e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Hubo un error al modificar la sucursal.");
         }
     }
 
@@ -492,5 +497,12 @@ public class SucursalController {
         }
     }
 
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
 }

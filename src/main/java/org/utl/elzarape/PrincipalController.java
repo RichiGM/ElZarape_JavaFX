@@ -14,11 +14,25 @@ public class PrincipalController {
     private AnchorPane mainContainer;
 
     @FXML
+    private HBox alimentoItemBar;
+
+    @FXML
+    private HBox bebidaItemBar;
+
+    @FXML
+    private HBox categoriaItemBar;
+
+    @FXML
     private HBox homeItemBar;
+
     @FXML
     private HBox sucursalItemBar;
+
     @FXML
     private HBox salirItemBar;
+
+    @FXML
+    private HBox usuarioItemBar;
 
     @FXML
     public void initialize() {
@@ -27,7 +41,15 @@ public class PrincipalController {
 
         homeItemBar.setOnMouseClicked(event -> loadFXML("home"));
 
-        sucursalItemBar.setOnMouseClicked(event -> loadFXML("sucursal")); // Carga "Sucursales" dentro del mainContainer
+        sucursalItemBar.setOnMouseClicked(event -> loadFXML("sucursal"));
+
+        usuarioItemBar.setOnMouseClicked(event -> loadFXML("usuario"));
+
+        alimentoItemBar.setOnMouseClicked(event -> loadFXML("alimento"));
+
+        bebidaItemBar.setOnMouseClicked(event -> loadFXML("bebidas"));
+
+        categoriaItemBar.setOnMouseClicked(event -> loadFXML("categoria"));
 
         salirItemBar.setOnMouseClicked(event -> logout());
     }

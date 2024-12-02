@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@style/styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.utl.elzarape.PrincipalController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@style/principal.styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.utl.elzarape.PrincipalController">
     <left>
         <VBox prefHeight="700.0" prefWidth="238.0" styleClass="menu-bar" BorderPane.alignment="CENTER">
             <children>
@@ -78,7 +78,7 @@
                         <String fx:value="menu-bar-item" />
                     </styleClass>
                 </HBox>
-                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                <HBox fx:id="alimentoItemBar" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                     <children>
                         <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="120.0" text="Alimentos" textFill="WHITE" HBox.hgrow="ALWAYS">
                             <font>
@@ -99,7 +99,7 @@
                         <String fx:value="menu-bar-item" />
                     </styleClass>
                 </HBox>
-                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                <HBox fx:id="bebidaItemBar" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                     <children>
                         <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="120.0" text="Bebidas" textFill="WHITE" HBox.hgrow="ALWAYS">
                             <font>
@@ -120,7 +120,7 @@
                         <String fx:value="menu-bar-item" />
                     </styleClass>
                 </HBox>
-                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                <HBox fx:id="categoriaItemBar" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                     <children>
                         <Label alignment="CENTER" contentDisplay="CENTER" prefWidth="120.0" text="Categorias" textFill="WHITE" HBox.hgrow="ALWAYS">
                             <font>
