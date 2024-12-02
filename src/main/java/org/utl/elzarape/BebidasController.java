@@ -7,6 +7,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import org.utl.elzarape.model.Alimento;
 import org.utl.elzarape.model.Bebida;
@@ -15,6 +17,7 @@ import org.utl.elzarape.model.Producto;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Base64;
@@ -30,7 +33,10 @@ public class BebidasController {
     private TableView<Bebida> tblBebidas;
 
     @FXML
-    private TableColumn<Bebida, String> colNombre, colDescripcion, colCategoria, colFoto, colEstatus;
+    private TableColumn<Bebida, ImageView> colFoto; // Cambiar el tipo a ImageView
+
+    @FXML
+    private TableColumn<Bebida, String> colNombre, colDescripcion, colCategoria, colEstatus;
 
     @FXML
     private TableColumn<Bebida, Double> colPrecio;
@@ -40,6 +46,9 @@ public class BebidasController {
 
     @FXML
     private ComboBox<Categoria> cbCategoria;
+
+    @FXML
+    private ImageView ivFoto;
 
 
     @FXML
@@ -66,6 +75,8 @@ public class BebidasController {
             }
         });
         tblBebidas.setOnMouseClicked(event -> showBebidasSelected());
+        Image image = new Image(getClass().getResourceAsStream("/org/utleon/elzarape/img/placeholder.png"));
+        ivFoto.setImage(image);
     }
 
     @FXML
@@ -74,7 +85,36 @@ public class BebidasController {
         colDescripcion.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getProducto().getDescripcion()));
         colPrecio.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getProducto().getPrecio()));
         colCategoria.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getProducto().getCategoria().getDescripcion()));
-        colFoto.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getProducto().getFoto()));
+
+        // Modificar para crear un ImageView
+        colFoto.setCellValueFactory(col -> {
+            String fotoBase64 = col.getValue().getProducto().getFoto();
+            ImageView imageView = new ImageView();
+
+            if (fotoBase64 != null && !fotoBase64.isEmpty()) {
+                if (fotoBase64.startsWith("data:image")) {
+                    try {
+                        Image image = new Image(new ByteArrayInputStream(Base64.getDecoder().decode(fotoBase64.split(",")[1])));
+                        imageView.setImage(image);
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("Error al decodificar la imagen: " + e.getMessage());
+                    }
+                } else {
+                    System.err.println("La cadena no tiene el prefijo correcto: " + fotoBase64);
+                }
+            } else {
+                System.err.println("No hay imagen disponible para esta bebida.");
+            }
+
+            // Establecer propiedades del ImageView
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+            imageView.setFitHeight(75); // Alto fijo
+            imageView.setFitWidth(75); // Ancho fijo
+
+            return new SimpleObjectProperty<>(imageView);
+        });
+
         colEstatus.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getProducto().getActivo() == 1 ? "Activo" : "Inactivo"));
 
         tblBebidas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -218,9 +258,15 @@ public class BebidasController {
                     imagenBase64 = bebidaSelected.getProducto().getFoto();
                 }
                 lblEstadoImagen.setText("Imagen cargada desde el registro seleccionado");
+
+                // Cargar la imagen en el ImageView
+                byte[] imageBytes = Base64.getDecoder().decode(imagenBase64.split(",")[1]); // Obtener solo la parte de Base64
+                Image image = new Image(new ByteArrayInputStream(imageBytes));
+                ivFoto.setImage(image);
             } else {
                 imagenBase64 = ""; // Vaciar la imagen si no existe
                 lblEstadoImagen.setText("No se ha cargado ninguna imagen");
+                ivFoto.setImage(null); // Limpiar el ImageView
             }
             btnGuardar.setText("Modificar");
             btnCambiarEstatus.setVisible(true);
@@ -379,6 +425,8 @@ public class BebidasController {
         tblBebidas.getSelectionModel().clearSelection();
         btnGuardar.setText("Agregar");
         btnCambiarEstatus.setVisible(false);
+        Image image = new Image(getClass().getResourceAsStream("/org/utleon/elzarape/img/placeholder.png"));
+        ivFoto.setImage(image);
     }
 
     @FXML
@@ -397,6 +445,12 @@ public class BebidasController {
 
                 imagenBase64 = "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(datos);
                 lblEstadoImagen.setText("Imagen cargada correctamente");
+
+                byte[] imageBytes = Base64.getDecoder().decode(imagenBase64.split(",")[1]); // Obtener solo la parte de Base64
+                Image image = new Image(new ByteArrayInputStream(imageBytes));
+
+                // Asignar la imagen al ImageView
+                ivFoto.setImage(image);
             } else {
                 lblEstadoImagen.setText("No se seleccionó ninguna imagen");
             }

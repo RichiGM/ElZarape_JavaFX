@@ -8,6 +8,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -15,6 +17,7 @@ import org.utl.elzarape.model.Ciudad;
 import org.utl.elzarape.model.Estado;
 import org.utl.elzarape.model.Sucursal;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Base64;
@@ -35,6 +38,9 @@ public class SucursalController {
     private TableColumn<Sucursal, String> colEstatus;
 
     @FXML
+    private TableColumn<Sucursal, ImageView> colFoto;
+
+    @FXML
     private ComboBox<Ciudad> cbCiudad;
 
     @FXML
@@ -51,6 +57,9 @@ public class SucursalController {
 
     @FXML
     private Label lblEstadoImagen;
+
+    @FXML
+    private ImageView ivFoto;
 
     private String imagenBase64 = ""; // Variable para almacenar la imagen en Base64
 
@@ -77,6 +86,8 @@ public class SucursalController {
         });
 
         tblSucursales.setOnMouseClicked(event -> showSucursalSelected());
+        Image image = new Image(getClass().getResourceAsStream("/org/utleon/elzarape/img/placeholder.png"));
+        ivFoto.setImage(image);
     }
 
 
@@ -94,6 +105,36 @@ public class SucursalController {
                 col.getValue().getSucursalActivo() == 1 ? "Activo" : "Inactivo"));
 
         tblSucursales.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        colFoto.setCellValueFactory(col -> {
+            String fotoBase64 = col.getValue().getFoto();
+            ImageView imageView = new ImageView();
+
+            if (fotoBase64 != null && !fotoBase64.isEmpty()) {
+                if (fotoBase64.startsWith("data:image")) {
+                    try {
+                        Image image = new Image(new ByteArrayInputStream(Base64.getDecoder().decode(fotoBase64.split(",")[1])));
+                        imageView.setImage(image);
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("Error al decodificar la imagen: " + e.getMessage());
+                    }
+                } else {
+                    System.err.println("La cadena no tiene el prefijo correcto: " + fotoBase64);
+                }
+            } else {
+                System.err.println("No hay imagen disponible para este alimento.");
+            }
+
+            // Establecer propiedades del ImageView
+            imageView.setPreserveRatio(true); // Mantener la relación de aspecto
+            imageView.setSmooth(true); // Suavizar la imagen
+
+            // Ajustar el tamaño del ImageView
+            imageView.setFitHeight(75); // Alto fijo
+            imageView.setFitWidth(75); // Ancho inicial (puedes quitar esto si no quieres un ancho fijo)
+
+            return new SimpleObjectProperty<>(imageView);
+        });
     }
 
     private void buscarSucursales(String filtro) {
@@ -123,7 +164,6 @@ public class SucursalController {
         new Thread(() -> {
             try {
                 HttpResponse<String> response = Unirest.get(globals.BASE_URL + "sucursal/getall").asString();
-                System.out.println("JSON recibido: " + response.getBody());
                 Gson gson = new Gson();
                 Sucursal[] sucursalArray = gson.fromJson(response.getBody(), Sucursal[].class);
 
@@ -208,7 +248,6 @@ public class SucursalController {
                 });
             }
 
-            // Verificar y cargar la imagen
             if (sucursalSelected.getFoto() != null && !sucursalSelected.getFoto().isEmpty()) {
                 // Si la imagen no tiene el prefijo, agregarlo
                 if (!sucursalSelected.getFoto().startsWith("data:image")) {
@@ -217,9 +256,15 @@ public class SucursalController {
                     imagenBase64 = sucursalSelected.getFoto();
                 }
                 lblEstadoImagen.setText("Imagen cargada desde el registro seleccionado");
+
+                // Cargar la imagen en el ImageView
+                byte[] imageBytes = Base64.getDecoder().decode(imagenBase64.split(",")[1]); // Obtener solo la parte de Base64
+                Image image = new Image(new ByteArrayInputStream(imageBytes));
+                ivFoto.setImage(image);
             } else {
                 imagenBase64 = ""; // Vaciar la imagen si no existe
                 lblEstadoImagen.setText("No se ha cargado ninguna imagen");
+                ivFoto.setImage(null); // Limpiar el ImageView
             }
 
             btnGuardar.setText("Modificar");
@@ -272,6 +317,8 @@ public class SucursalController {
         cbEstado.getSelectionModel().clearSelection();
         btnGuardar.setText("Agregar");
         btnCambiarEstatus.setVisible(false);
+        Image image = new Image(getClass().getResourceAsStream("/org/utleon/elzarape/img/placeholder.png"));
+        ivFoto.setImage(image);
     }
 
 
@@ -486,8 +533,11 @@ public class SucursalController {
 
                 // Actualizar el Label para indicar que la imagen se cargó
                 lblEstadoImagen.setText("Imagen cargada correctamente");
+                byte[] imageBytes = Base64.getDecoder().decode(imagenBase64.split(",")[1]); // Obtener solo la parte de Base64
+                Image image = new Image(new ByteArrayInputStream(imageBytes));
 
-                System.out.println("Imagen convertida a Base64: " + imagenBase64.substring(0, 50) + "..."); // Depuración
+                // Asignar la imagen al ImageView
+                ivFoto.setImage(image);
             } catch (Exception e) {
                 e.printStackTrace();
                 lblEstadoImagen.setText("Error al cargar la imagen");

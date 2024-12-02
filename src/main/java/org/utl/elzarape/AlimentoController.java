@@ -6,7 +6,15 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.ImageCursor;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.utl.elzarape.model.Alimento;
 import org.utl.elzarape.model.Categoria;
@@ -15,6 +23,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.utl.elzarape.model.Sucursal;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Base64;
@@ -30,8 +39,10 @@ public class AlimentoController {
     private TableView<Alimento> tblAlimentos;
 
     @FXML
-    private TableColumn<Alimento, String> colNombre, colDescripcion, colCategoria, colFoto, colEstatus;
+    private TableColumn<Alimento, String> colNombre, colDescripcion, colCategoria, colEstatus;
 
+    @FXML
+    private TableColumn<Alimento, ImageView> colFoto;
     @FXML
     private TableColumn<Alimento, Double> colPrecio;
 
@@ -40,6 +51,9 @@ public class AlimentoController {
 
     @FXML
     private ComboBox<Categoria> cbCategoria;
+
+    @FXML
+    private ImageView ivFoto;
 
 
     @FXML
@@ -66,15 +80,47 @@ public class AlimentoController {
             }
         });
         tblAlimentos.setOnMouseClicked(event -> showAlimentoSelected());
+        Image image = new Image(getClass().getResourceAsStream("/org/utleon/elzarape/img/placeholder.png"));
+        ivFoto.setImage(image);
     }
-
     @FXML
     private void initColumns() {
         colNombre.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getProducto().getNombre()));
         colDescripcion.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getProducto().getDescripcion()));
         colPrecio.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getProducto().getPrecio()));
         colCategoria.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getProducto().getCategoria().getDescripcion()));
-        colFoto.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getProducto().getFoto()));
+
+        // Cambiar aquí para usar ImageView
+        colFoto.setCellValueFactory(col -> {
+            String fotoBase64 = col.getValue().getProducto().getFoto();
+            ImageView imageView = new ImageView();
+
+            if (fotoBase64 != null && !fotoBase64.isEmpty()) {
+                if (fotoBase64.startsWith("data:image")) {
+                    try {
+                        Image image = new Image(new ByteArrayInputStream(Base64.getDecoder().decode(fotoBase64.split(",")[1])));
+                        imageView.setImage(image);
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("Error al decodificar la imagen: " + e.getMessage());
+                    }
+                } else {
+                    System.err.println("La cadena no tiene el prefijo correcto: " + fotoBase64);
+                }
+            } else {
+                System.err.println("No hay imagen disponible para este alimento.");
+            }
+
+            // Establecer propiedades del ImageView
+            imageView.setPreserveRatio(true); // Mantener la relación de aspecto
+            imageView.setSmooth(true); // Suavizar la imagen
+
+            // Ajustar el tamaño del ImageView
+            imageView.setFitHeight(75); // Alto fijo
+            imageView.setFitWidth(75); // Ancho inicial (puedes quitar esto si no quieres un ancho fijo)
+
+            return new SimpleObjectProperty<>(imageView);
+        });
+
         colEstatus.setCellValueFactory(col -> new SimpleObjectProperty<>(col.getValue().getProducto().getActivo() == 1 ? "Activo" : "Inactivo"));
 
         tblAlimentos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -209,7 +255,7 @@ public class AlimentoController {
                     .findFirst()
                     .orElse(null));
 
-            // Verificar y cargar la imagen
+            // Verificar y cargar la imagen00
             if (alimentoSelected.getProducto().getFoto() != null && !alimentoSelected.getProducto().getFoto().isEmpty()) {
                 // Si la imagen no tiene el prefijo, agregarlo
                 if (!alimentoSelected.getProducto().getFoto().startsWith("data:image")) {
@@ -218,9 +264,15 @@ public class AlimentoController {
                     imagenBase64 = alimentoSelected.getProducto().getFoto();
                 }
                 lblEstadoImagen.setText("Imagen cargada desde el registro seleccionado");
+
+                // Cargar la imagen en el ImageView
+                byte[] imageBytes = Base64.getDecoder().decode(imagenBase64.split(",")[1]); // Obtener solo la parte de Base64
+                Image image = new Image(new ByteArrayInputStream(imageBytes));
+                ivFoto.setImage(image);
             } else {
                 imagenBase64 = ""; // Vaciar la imagen si no existe
                 lblEstadoImagen.setText("No se ha cargado ninguna imagen");
+                ivFoto.setImage(null); // Limpiar el ImageView
             }
             btnGuardar.setText("Modificar");
             btnCambiarEstatus.setVisible(true);
@@ -379,6 +431,8 @@ public class AlimentoController {
         tblAlimentos.getSelectionModel().clearSelection();
         btnGuardar.setText("Agregar");
         btnCambiarEstatus.setVisible(false);
+        Image image = new Image(getClass().getResourceAsStream("/org/utleon/elzarape/img/placeholder.png"));
+        ivFoto.setImage(image);
     }
 
     @FXML
@@ -397,6 +451,12 @@ public class AlimentoController {
 
                 imagenBase64 = "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(datos);
                 lblEstadoImagen.setText("Imagen cargada correctamente");
+
+                byte[] imageBytes = Base64.getDecoder().decode(imagenBase64.split(",")[1]); // Obtener solo la parte de Base64
+                Image image = new Image(new ByteArrayInputStream(imageBytes));
+
+                // Asignar la imagen al ImageView
+                ivFoto.setImage(image);
             } else {
                 lblEstadoImagen.setText("No se seleccionó ninguna imagen");
             }
