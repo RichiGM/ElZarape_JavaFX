@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.fxml.FXMLLoader;
@@ -26,12 +27,36 @@ public class LoginController {
     private PasswordField txtPassword;
 
     @FXML
+    private TextField txtPasswordVisible;
+
+    @FXML
     private Button btnEntrar;
 
+    @FXML
+    private Button btnTogglePassword;
+
+    private boolean isPasswordVisible = false;
     @FXML
     public void initialize() {
         btnEntrar.setOnAction(event -> validarCredenciales());
     }
+
+    @FXML
+    public void togglePasswordVisibility() {
+        isPasswordVisible = !isPasswordVisible;
+        if (isPasswordVisible) {
+            // Cambiar a texto visible
+            txtPasswordVisible.setText(txtPassword.getText());
+            txtPasswordVisible.setVisible(true);
+            txtPassword.setVisible(false);
+        } else {
+            // Cambiar a texto oculto
+            txtPassword.setText(txtPasswordVisible.getText());
+            txtPassword.setVisible(true);
+            txtPasswordVisible.setVisible(false);
+        }
+    }
+
 
     private void validarCredenciales() {
         String usuario = txtUsuario.getText();
